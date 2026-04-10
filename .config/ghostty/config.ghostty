@@ -1,0 +1,5 @@
+font-size = 12
+cursor-click-to-move = false
+mouse-hide-while-typing = true
+mouse-shift-capture = false
+adjust-cell-width = "-10%"

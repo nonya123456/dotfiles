@@ -7,11 +7,13 @@ link() {
     local dst="$HOME/$1"
 
     mkdir -p "$(dirname "$dst")"
+    rm -rf "$dst"
     ln -sf "$src" "$dst"
     echo "Linked $1"
 }
 
 link ".config/hypr"
+link ".config/ghostty"
 link ".vimrc"
 
 echo "Done!"
