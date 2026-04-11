@@ -16,6 +16,7 @@ case "$(uname -s)" in
     Darwin*)
         link ".config/ghostty"
         link ".config/nvim"
+        link ".config/tmux"
         link ".vimrc"
         ;;
     Linux*)
@@ -23,6 +24,7 @@ case "$(uname -s)" in
         link ".config/fontconfig"
         link ".config/ghostty"
         link ".config/nvim"
+        link ".config/tmux"
         link ".vimrc"
         ;;
 esac
