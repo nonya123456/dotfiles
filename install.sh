@@ -21,6 +21,7 @@ case "$(uname -s)" in
         ;;
     Linux*)
         link ".config/hypr"
+        link ".config/waybar"
         link ".config/fontconfig"
         link ".config/ghostty"
         link ".config/nvim"
