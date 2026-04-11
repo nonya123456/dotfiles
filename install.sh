@@ -15,6 +15,7 @@ link() {
 link ".config/hypr"
 link ".config/ghostty"
 link ".config/nvim"
+link ".config/fontconfig"
 link ".vimrc"
 
 echo "Done!"
