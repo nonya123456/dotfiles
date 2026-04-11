@@ -12,10 +12,19 @@ link() {
     echo "Linked $1"
 }
 
-link ".config/hypr"
-link ".config/ghostty"
-link ".config/nvim"
-link ".config/fontconfig"
-link ".vimrc"
+case "$(uname -s)" in
+    Darwin*)
+        link ".config/ghostty"
+        link ".config/nvim"
+        link ".vimrc"
+        ;;
+    Linux*)
+        link ".config/hypr"
+        link ".config/fontconfig"
+        link ".config/ghostty"
+        link ".config/nvim"
+        link ".vimrc"
+        ;;
+esac
 
 echo "Done!"
