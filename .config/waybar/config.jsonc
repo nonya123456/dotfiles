@@ -6,7 +6,7 @@
 
   "modules-left": ["hyprland/workspaces", "hyprland/window"],
   "modules-center": ["clock"],
-  "modules-right": ["pulseaudio", "network", "cpu", "memory", "battery", "tray"],
+  "modules-right": ["pulseaudio", "network", "battery", "tray"],
 
   "hyprland/workspaces": {
     "disable-scroll": true,
@@ -19,15 +19,6 @@
   "clock": {
     "format": "{:%H:%M  %a %d %b}",
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
-  },
-
-  "cpu": {
-    "format": "󰍛 {usage}%",
-    "interval": 2
-  },
-
-  "memory": {
-    "format": "󰾆 {}%"
   },
 
   "battery": {
