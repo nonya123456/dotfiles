@@ -18,6 +18,7 @@ case "$(uname -s)" in
         link ".config/nvim"
         link ".config/tmux"
         link ".vimrc"
+        link ".claude/skills"
         ;;
     Linux*)
         link ".config/hypr"
@@ -27,6 +28,7 @@ case "$(uname -s)" in
         link ".config/nvim"
         link ".config/tmux"
         link ".vimrc"
+        link ".claude/skills"
         ;;
 esac
 
