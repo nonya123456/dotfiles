@@ -11,3 +11,9 @@ cd ~/dotfiles
 ```
 
 The install script symlinks configs into `$HOME`.
+
+## Dependencies
+
+### Neovim
+
+- [`tree-sitter`](https://github.com/tree-sitter/tree-sitter) CLI
