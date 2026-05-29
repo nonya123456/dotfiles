@@ -850,15 +850,22 @@ require('lazy').setup({
   --    end,
   --  },
 
+  -- {
+  --   'catppuccin/nvim',
+  --   lazy = false,
+  --   name = 'catppuccin',
+  --   priority = 1000, -- Ensures the colorscheme loads first
+  --   config = function()
+  --     -- Set the desired flavor (mocha, macchiato, frappe, or latte)
+  --     vim.cmd.colorscheme 'catppuccin-mocha'
+  --   end,
+  -- },
+
   {
-    'catppuccin/nvim',
+    'EdenEast/nightfox.nvim',
     lazy = false,
-    name = 'catppuccin',
-    priority = 1000, -- Ensures the colorscheme loads first
-    config = function()
-      -- Set the desired flavor (mocha, macchiato, frappe, or latte)
-      vim.cmd.colorscheme 'catppuccin-mocha'
-    end,
+    priority = 1000,
+    config = function() vim.cmd.colorscheme 'carbonfox' end,
   },
 
   -- Highlight todo, notes, etc in comments
