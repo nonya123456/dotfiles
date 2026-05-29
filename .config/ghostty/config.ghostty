@@ -1,3 +1,4 @@
+theme = Carbonfox
 font-size = 16
 cursor-click-to-move = false
 mouse-hide-while-typing = true
