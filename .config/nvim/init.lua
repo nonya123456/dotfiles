@@ -690,6 +690,10 @@ require('lazy').setup({
         vim.lsp.config(name, server)
         vim.lsp.enable(name)
       end
+
+      -- GDScript LSP connects to Godot's built-in language server (port 6005 by default).
+      -- Godot must be running with the project open for LSP features to work.
+      vim.lsp.enable 'gdscript'
     end,
   },
 
@@ -723,10 +727,18 @@ require('lazy').setup({
           }
         end
       end,
+      formatters = {
+        gdscript_formatter = {
+          command = 'gdscript-formatter',
+          args = { '--reorder-code' },
+          stdin = true,
+        },
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
         ruby = { 'rubyfmt' },
         cmake = { 'cmake_format' },
+        gdscript = { 'gdscript_formatter' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -925,7 +937,7 @@ require('lazy').setup({
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
       -- ensure basic parser are installed
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local parsers = { 'bash', 'c', 'diff', 'gdscript', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
       require('nvim-treesitter').install(parsers)
 
       ---@param buf integer

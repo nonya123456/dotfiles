@@ -17,3 +17,8 @@ The install script symlinks configs into `$HOME`.
 ### Neovim
 
 - [`tree-sitter`](https://github.com/tree-sitter/tree-sitter) CLI
+
+### GDScript (optional)
+
+- [GDScript-formatter](https://github.com/GDQuest/GDScript-formatter) — install and add to `$PATH` for format-on-save in `.gd` files
+- Godot must be running with the project open for LSP features (connects to `localhost:6005`)
