@@ -1003,6 +1003,16 @@ require('lazy').setup({
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   -- { import = 'custom.plugins' },
+
+  {
+    'shortcuts/no-neck-pain.nvim',
+    version = '*',
+    opts = { width = 120 },
+    keys = {
+      { '<leader>zz', '<cmd>NoNeckPain<cr>', desc = 'Toggle centered layout' },
+    },
+  },
+
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
