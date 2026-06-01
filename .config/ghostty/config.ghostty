@@ -1,9 +1,10 @@
 theme = Carbonfox
 font-size = 16
-cursor-click-to-move = false
-mouse-hide-while-typing = true
-mouse-shift-capture = false
-adjust-cell-width = "-10%"
+font-family = JetBrains Mono
 font-feature = -dlig
 font-feature = -liga
 font-feature = -calt
+adjust-cell-width = "-10%"
+cursor-click-to-move = false
+mouse-hide-while-typing = true
+mouse-shift-capture = false
