@@ -14,6 +14,7 @@ link() {
 
 case "$(uname -s)" in
     Darwin*)
+        link ".config/alacritty"
         link ".config/ghostty"
         link ".config/nvim"
         link ".config/tmux"
@@ -21,6 +22,7 @@ case "$(uname -s)" in
         link ".claude/skills"
         ;;
     Linux*)
+        link ".config/alacritty"
         link ".config/hypr"
         link ".config/waybar"
         link ".config/fontconfig"

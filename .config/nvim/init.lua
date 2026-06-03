@@ -740,6 +740,7 @@ require('lazy').setup({
         ruby = { 'rubyfmt' },
         cmake = { 'cmake_format' },
         gdscript = { 'gdscript_formatter' },
+        toml = { 'taplo' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
