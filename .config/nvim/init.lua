@@ -18,7 +18,9 @@ vim.o.showmode = false
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
-vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
+vim.schedule(function()
+  vim.o.clipboard = 'unnamedplus'
+end)
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -74,7 +76,7 @@ vim.keymap.set('n', '<leader>e', ':Explore<CR>', { desc = '[E]xplore' })
 
 -- Diagnostic Config & Keymaps
 -- See :help vim.diagnostic.Opts
-vim.diagnostic.config {
+vim.diagnostic.config({
   update_in_insert = false,
   severity_sort = true,
   float = { border = 'rounded', source = 'if_many' },
@@ -83,7 +85,7 @@ vim.diagnostic.config {
   virtual_lines = false,
   -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
   jump = { float = true },
-}
+})
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
@@ -104,16 +106,20 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
-  callback = function() vim.hl.on_yank() end,
+  callback = function()
+    vim.hl.on_yank()
+  end,
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
-  if vim.v.shell_error ~= 0 then error('Error cloning lazy.nvim:\n' .. out) end
+  local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    error('Error cloning lazy.nvim:\n' .. out)
+  end
 end
 
 ---@type vim.Option
@@ -169,14 +175,16 @@ require('lazy').setup({
       {
         'nvim-telescope/telescope-fzf-native.nvim',
         build = 'make',
-        cond = function() return vim.fn.executable 'make' == 1 end,
+        cond = function()
+          return vim.fn.executable('make') == 1
+        end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- See `:help telescope` and `:help telescope.setup()`
-      require('telescope').setup {
+      require('telescope').setup({
         defaults = {},
         pickers = {
           find_files = { hidden = true, file_ignore_patterns = { '^%.git/' } },
@@ -185,12 +193,12 @@ require('lazy').setup({
         extensions = {
           ['ui-select'] = { require('telescope.themes').get_dropdown() },
         },
-      }
+      })
 
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
 
-      local builtin = require 'telescope.builtin'
+      local builtin = require('telescope.builtin')
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
@@ -213,36 +221,33 @@ require('lazy').setup({
           vim.keymap.set('n', 'gI', builtin.lsp_implementations, { buffer = buf, desc = '[G]oto [I]mplementation' })
           vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
           vim.keymap.set('n', 'gO', builtin.lsp_document_symbols, { buffer = buf, desc = 'Open Document Symbols' })
-          vim.keymap.set('n', 'gW', builtin.lsp_dynamic_workspace_symbols, { buffer = buf, desc = 'Open Workspace Symbols' })
+          vim.keymap.set(
+            'n',
+            'gW',
+            builtin.lsp_dynamic_workspace_symbols,
+            { buffer = buf, desc = 'Open Workspace Symbols' }
+          )
           vim.keymap.set('n', 'gt', builtin.lsp_type_definitions, { buffer = buf, desc = '[G]oto [T]ype Definition' })
         end,
       })
 
-      vim.keymap.set(
-        'n',
-        '<leader>/',
-        function()
-          builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-            winblend = 10,
-            previewer = false,
-          })
-        end,
-        { desc = '[/] Fuzzily search in current buffer' }
-      )
+      vim.keymap.set('n', '<leader>/', function()
+        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown({
+          winblend = 10,
+          previewer = false,
+        }))
+      end, { desc = '[/] Fuzzily search in current buffer' })
 
-      vim.keymap.set(
-        'n',
-        '<leader>s/',
-        function()
-          builtin.live_grep {
-            grep_open_files = true,
-            prompt_title = 'Live Grep in Open Files',
-          }
-        end,
-        { desc = '[S]earch [/] in Open Files' }
-      )
+      vim.keymap.set('n', '<leader>s/', function()
+        builtin.live_grep({
+          grep_open_files = true,
+          prompt_title = 'Live Grep in Open Files',
+        })
+      end, { desc = '[S]earch [/] in Open Files' })
 
-      vim.keymap.set('n', '<leader>sn', function() builtin.find_files { cwd = vim.fn.stdpath 'config' } end, { desc = '[S]earch [N]eovim files' })
+      vim.keymap.set('n', '<leader>sn', function()
+        builtin.find_files({ cwd = vim.fn.stdpath('config') })
+      end, { desc = '[S]earch [N]eovim files' })
     end,
   },
 
@@ -314,14 +319,16 @@ require('lazy').setup({
               group = vim.api.nvim_create_augroup('lsp-detach', { clear = true }),
               callback = function(event2)
                 vim.lsp.buf.clear_references()
-                vim.api.nvim_clear_autocmds { group = 'lsp-highlight', buffer = event2.buf }
+                vim.api.nvim_clear_autocmds({ group = 'lsp-highlight', buffer = event2.buf })
               end,
             })
           end
 
           -- Toggle inlay hints if the language server supports them
           if client and client:supports_method('textDocument/inlayHint', event.buf) then
-            map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
+            map('<leader>th', function()
+              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
+            end, '[T]oggle Inlay [H]ints')
           end
         end,
       })
@@ -337,12 +344,20 @@ require('lazy').setup({
             plugins = {
               {
                 name = '@vue/typescript-plugin',
-                location = vim.fn.expand '$MASON/packages/vue-language-server' .. '/node_modules/@vue/language-server',
+                location = vim.fn.expand('$MASON/packages/vue-language-server') .. '/node_modules/@vue/language-server',
                 languages = { 'javascript', 'typescript', 'vue' },
               },
             },
           },
-          filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx', 'vue' },
+          filetypes = {
+            'javascript',
+            'javascriptreact',
+            'javascript.jsx',
+            'typescript',
+            'typescriptreact',
+            'typescript.tsx',
+            'vue',
+          },
           root_markers = { 'package.json' },
           single_file_support = false,
         },
@@ -354,7 +369,12 @@ require('lazy').setup({
           on_init = function(client)
             if client.workspace_folders then
               local path = client.workspace_folders[1].name
-              if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
+              if
+                path ~= vim.fn.stdpath('config')
+                and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc'))
+              then
+                return
+              end
             end
 
             client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
@@ -380,7 +400,7 @@ require('lazy').setup({
       -- Ensure the servers and tools above are installed. Run :Mason to manage manually.
       local ensure_installed = vim.tbl_keys(servers or {})
 
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      require('mason-tool-installer').setup({ ensure_installed = ensure_installed })
 
       for name, server in pairs(servers) do
         vim.lsp.config(name, server)
@@ -389,7 +409,7 @@ require('lazy').setup({
 
       -- GDScript LSP connects to Godot's built-in language server (port 6005 by default).
       -- Godot must be running with the project open for LSP features to work.
-      vim.lsp.enable 'gdscript'
+      vim.lsp.enable('gdscript')
     end,
   },
 
@@ -401,7 +421,9 @@ require('lazy').setup({
     keys = {
       {
         '<leader>f',
-        function() require('conform').format { async = true, lsp_format = 'fallback' } end,
+        function()
+          require('conform').format({ async = true, lsp_format = 'fallback' })
+        end,
         mode = '',
         desc = '[F]ormat buffer',
       },
@@ -453,7 +475,9 @@ require('lazy').setup({
         build = (function()
           -- Build Step is needed for regex support in snippets.
           -- Not supported in many windows environments, remove the below condition to re-enable on windows.
-          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then return end
+          if vim.fn.has('win32') == 1 or vim.fn.executable('make') == 0 then
+            return
+          end
           return 'make install_jsregexp'
         end)(),
         opts = {},
@@ -497,7 +521,7 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
+      require('mini.ai').setup({ n_lines = 500 })
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --  - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
@@ -506,12 +530,14 @@ require('lazy').setup({
       require('mini.surround').setup()
 
       -- Simple and easy statusline.
-      local statusline = require 'mini.statusline'
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      local statusline = require('mini.statusline')
+      statusline.setup({ use_icons = vim.g.have_nerd_font })
 
       -- Cursor location shown as LINE:COLUMN
       ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function() return '%2l:%-2v' end
+      statusline.section_location = function()
+        return '%2l:%-2v'
+      end
     end,
   },
 
@@ -523,13 +549,28 @@ require('lazy').setup({
     branch = 'main',
     config = function()
       -- ensure basic parsers are installed
-      local parsers = { 'bash', 'c', 'diff', 'gdscript', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local parsers = {
+        'bash',
+        'c',
+        'diff',
+        'gdscript',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+      }
       require('nvim-treesitter').install(parsers)
 
       ---@param buf integer
       ---@param language string
       local function treesitter_try_attach(buf, language)
-        if not vim.treesitter.language.add(language) then return end
+        if not vim.treesitter.language.add(language) then
+          return
+        end
         -- enables syntax highlighting and other treesitter features
         vim.treesitter.start(buf, language)
         -- enables treesitter based indentation
@@ -542,15 +583,19 @@ require('lazy').setup({
           local buf, filetype = args.buf, args.match
 
           local language = vim.treesitter.language.get_lang(filetype)
-          if not language then return end
+          if not language then
+            return
+          end
 
-          local installed_parsers = require('nvim-treesitter').get_installed 'parsers'
+          local installed_parsers = require('nvim-treesitter').get_installed('parsers')
 
           if vim.tbl_contains(installed_parsers, language) then
             treesitter_try_attach(buf, language)
           elseif vim.tbl_contains(available_parsers, language) then
             -- auto install the parser, then enable it once installed
-            require('nvim-treesitter').install(language):await(function() treesitter_try_attach(buf, language) end)
+            require('nvim-treesitter').install(language):await(function()
+              treesitter_try_attach(buf, language)
+            end)
           else
             treesitter_try_attach(buf, language)
           end
@@ -569,7 +614,9 @@ require('lazy').setup({
     'EdenEast/nightfox.nvim',
     lazy = false,
     priority = 1000,
-    config = function() vim.cmd.colorscheme 'carbonfox' end,
+    config = function()
+      vim.cmd.colorscheme('carbonfox')
+    end,
   },
 
   {
