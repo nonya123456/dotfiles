@@ -338,6 +338,7 @@ require('lazy').setup({
       local servers = {
         clangd = {},
         gopls = {},
+        ols = {},
         rust_analyzer = {},
         ts_ls = {
           init_options = {
@@ -457,6 +458,7 @@ require('lazy').setup({
         ruby = { 'rubyfmt' },
         cmake = { 'cmake_format' },
         gdscript = { 'gdscript_formatter' },
+        odin = { 'odinfmt' },
         toml = { 'taplo' },
       },
     },
