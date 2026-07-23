@@ -3,4 +3,4 @@ size = 16.0
 normal = { family = "JetBrains Mono" }
 
 [general]
-import = ["~/.config/alacritty/themes/themes/carbonfox.toml"]
+import = ["~/.config/alacritty/themes/carbonfox.toml"]
