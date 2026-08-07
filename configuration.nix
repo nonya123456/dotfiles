@@ -110,6 +110,8 @@
     vim
     tree-sitter
     gcc
+    ripgrep
+    fd
     alacritty
     wget
     fastfetch
