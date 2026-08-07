@@ -39,6 +39,7 @@ return {
     },
     formatters_by_ft = {
       lua = { 'stylua' },
+      nix = { 'nixfmt' },
       ruby = { 'rubyfmt' },
       cmake = { 'cmake_format' },
       gdscript = { 'gdscript_formatter' },
