@@ -31,6 +31,7 @@ case "$(uname -s)" in
         link ".config/ghostty"
         link ".config/nvim"
         link ".config/tmux"
+        link ".config/user-dirs.conf"
         link ".vimrc"
         link ".claude/skills"
         ;;
