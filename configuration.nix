@@ -42,18 +42,28 @@
     LC_TIME = "th_TH.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = true;
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true;
+    xwayland.enable = true;
+  };
 
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+  };
 
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
+  services.displayManager.defaultSession = "hyprland-uwsm";
+
+  programs.uwsm = {
+    enable = true;
+    waylandCompositors = {
+      hyprland = {
+        prettyName = "Hyprland";
+        comment = "Hyprland compositor managed by UWSM";
+        binPath = "/run/current-system/sw/bin/start-hyprland";
+      };
+    };
   };
 
   # Enable CUPS to print documents.
@@ -84,7 +94,6 @@
     description = "nonya";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-      kdePackages.kate
     #  thunderbird
     ];
   };
@@ -106,6 +115,18 @@
     fastfetch
     lazygit
     claude-code
+    waybar
+    rofi
+    mako
+    grim
+    slurp
+    wl-clipboard
+    brightnessctl
+    pamixer
+    playerctl
+    yazi
+    bibata-cursors
+    kitty
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -146,6 +167,8 @@
   programs.git.enable = true;
 
   fonts.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono
     jetbrains-mono
+    font-awesome
   ];
 }
