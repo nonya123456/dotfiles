@@ -132,7 +132,9 @@
     yazi
     bibata-cursors
     kitty
-    nixfmt-rfc-style
+    nixfmt
+    gnumake
+    cmake
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
