@@ -1,23 +1,18 @@
 -- LSP Plugins
--- Mason ships prebuilt binaries that don't run on NixOS; there, servers come from
--- the system PATH instead. Set NVIM_NO_MASON=1 to opt out anywhere else.
-local use_mason = not vim.uv.fs_stat('/etc/NIXOS') and vim.env.NVIM_NO_MASON == nil
-
 return {
   'neovim/nvim-lspconfig',
   dependencies = {
     -- Mason must be loaded before its dependents
     {
       'mason-org/mason.nvim',
-      enabled = use_mason,
       ---@module 'mason.settings'
       ---@type MasonSettings
       ---@diagnostic disable-next-line: missing-fields
       opts = {},
     },
     -- Maps LSP server names between nvim-lspconfig and Mason package names.
-    { 'mason-org/mason-lspconfig.nvim', enabled = use_mason },
-    { 'WhoIsSethDaniel/mason-tool-installer.nvim', enabled = use_mason },
+    'mason-org/mason-lspconfig.nvim',
+    'WhoIsSethDaniel/mason-tool-installer.nvim',
 
     -- Useful status updates for LSP.
     { 'j-hui/fidget.nvim', opts = {} },
@@ -93,9 +88,7 @@ return {
       ols = {},
       rust_analyzer = {},
       ts_ls = {
-        -- Vue support relies on the Mason-installed @vue/language-server; without
-        -- Mason there is no path to point at, so ts_ls runs plain.
-        init_options = use_mason and {
+        init_options = {
           plugins = {
             {
               name = '@vue/typescript-plugin',
@@ -103,7 +96,7 @@ return {
               languages = { 'javascript', 'typescript', 'vue' },
             },
           },
-        } or nil,
+        },
         filetypes = {
           'javascript',
           'javascriptreact',
@@ -150,17 +143,15 @@ return {
       },
     }
 
-    if use_mason then
-      -- Formatters/linters (not LSP servers) to install via Mason.
-      local tools = {
-        'stylua', -- Used to format Lua code
-      }
+    -- Formatters/linters (not LSP servers) to install via Mason.
+    local tools = {
+      'stylua', -- Used to format Lua code
+    }
 
-      -- Ensure the servers and tools above are installed. Run :Mason to manage manually.
-      local ensure_installed = vim.list_extend(vim.tbl_keys(servers), tools)
+    -- Ensure the servers and tools above are installed. Run :Mason to manage manually.
+    local ensure_installed = vim.list_extend(vim.tbl_keys(servers), tools)
 
-      require('mason-tool-installer').setup({ ensure_installed = ensure_installed })
-    end
+    require('mason-tool-installer').setup({ ensure_installed = ensure_installed })
 
     for name, server in pairs(servers) do
       vim.lsp.config(name, server)
