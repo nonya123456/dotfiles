@@ -42,7 +42,7 @@ return {
       ruby = { 'rubyfmt' },
       cmake = { 'cmake_format' },
       gdscript = { 'gdscript_formatter' },
-      odin = { 'odinfmt' },
+      odin = { 'odinfmt', 'trim_newlines' },
       toml = { 'taplo' },
     },
   },
