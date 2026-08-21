@@ -87,6 +87,7 @@ return {
       gopls = {},
       ols = {},
       rust_analyzer = {},
+      zls = {},
       ts_ls = {
         init_options = {
           plugins = {
