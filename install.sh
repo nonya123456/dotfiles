@@ -2,19 +2,26 @@
 
 DOTFILES="$HOME/dotfiles"
 
+# link <src> [dst]
 link() {
     local src="$DOTFILES/$1"
-    local dst="$HOME/$1"
+    local dst="$HOME/${2:-$1}"
+    local dir
+    dir="$(dirname "$dst")"
 
-    mkdir -p "$(dirname "$dst")"
+    if [ -L "$dir" ]; then
+        rm -f "$dir"
+    fi
+
+    mkdir -p "$dir"
     rm -rf "$dst"
-    ln -sf "$src" "$dst"
-    echo "Linked $1"
+    ln -sfn "$src" "$dst"
+    echo "Linked ${2:-$1}"
 }
 
 case "$(uname -s)" in
     Darwin*)
-        link ".config/alacritty"
+        link ".config/alacritty/darwin" ".config/alacritty"
         link ".config/kitty"
         link ".config/ghostty"
         link ".config/nvim"
@@ -23,7 +30,7 @@ case "$(uname -s)" in
         link ".claude/skills"
         ;;
     Linux*)
-        link ".config/alacritty"
+        link ".config/alacritty/linux" ".config/alacritty"
         link ".config/kitty"
         link ".config/ghostty"
         link ".config/nvim"
