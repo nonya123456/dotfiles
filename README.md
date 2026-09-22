@@ -12,6 +12,14 @@ cd ~/dotfiles
 
 The install script symlinks configs into `$HOME`.
 
+## Skills
+
+Install the skills in `skills/` with [`skills`](https://github.com/vercel-labs/skills):
+
+```sh
+npx skills add nonya123456/dotfiles -g
+```
+
 ## Dependencies
 
 ### Neovim
