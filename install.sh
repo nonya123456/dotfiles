@@ -27,7 +27,6 @@ case "$(uname -s)" in
         link ".config/nvim"
         link ".config/tmux"
         link ".vimrc"
-        link ".claude/skills"
         ;;
     Linux*)
         link ".config/alacritty/linux" ".config/alacritty"
@@ -36,7 +35,6 @@ case "$(uname -s)" in
         link ".config/nvim"
         link ".config/tmux"
         link ".vimrc"
-        link ".claude/skills"
         ;;
 esac
 
