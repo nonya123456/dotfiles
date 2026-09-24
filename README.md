@@ -12,6 +12,13 @@ cd ~/dotfiles
 
 The install script symlinks configs into `$HOME`.
 
+## vscode
+
+```sh
+ln -sf ~/dotfiles/vscode/settings.json ~/Library/Application\ Support/Code/User/settings.json
+ln -sf ~/dotfiles/vscode/keybindings.json ~/Library/Application\ Support/Code/User/keybindings.json
+```
+
 ## Skills
 
 Install the skills in `skills/` with [`skills`](https://github.com/vercel-labs/skills):

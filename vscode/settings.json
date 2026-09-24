@@ -1,0 +1,82 @@
+{
+    "vim.vimrc.enable": true,
+    "vim.leader": ",",
+    "editor.formatOnSave": true,
+    "editor.fontSize": 14,
+    "editor.fontFamily": "JetBrains Mono ExtraLight",
+    "editor.letterSpacing": -0.1,
+    "terminal.integrated.fontSize": 13,
+    "extensions.ignoreRecommendations": true,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "editor.minimap.enabled": false,
+    "testing.automaticallyOpenPeekView": "never",
+    "editor.formatOnPaste": true,
+    "godotTools.editorPath.godot4": "/Applications/Godot.app/Contents/MacOS/Godot",
+    "godotTools.lsp.serverPort": 6005,
+    "explorer.confirmDelete": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "workbench.iconTheme": "vs-seti",
+    "[gdscript]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": false,
+        "editor.defaultFormatter": "DoHe.godot-format"
+    },
+    "[gdshader]": {
+        "editor.insertSpaces": false,
+        "editor.detectIndentation": false
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "editor.gotoLocation.multipleDefinitions": "goto",
+    "[vue]": {
+        "editor.defaultFormatter": "Vue.volar",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "[css]": {
+        "editor.suggest.insertMode": "replace"
+    },
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "editor.quickSuggestions": {
+        "strings": "on"
+    },
+    "tailwindCSS.classAttributes": [
+        "class",
+        "ui"
+    ],
+    "tailwindCSS.experimental.classRegex": [
+        [
+            "ui:\\s*{([^)]*)\\s*}",
+            "(?:'|\"|`)([^']*)(?:'|\"|`)"
+        ]
+    ],
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "go.toolsManagement.autoUpdate": true,
+    "chat.disableAIFeatures": true,
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "claudeCode.preferredLocation": "sidebar",
+    "zig.path": "zig",
+    "zig.zls.enabled": "on",
+    "zig.zls.builtinPath": "/Users/nonya/.zvm/bin/zls",
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "godotFormatter.safe": false,
+    "godotFormatter.reorderCode": true,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "claudeCode.selectedModel": "claude-opus-4-6",
+    "workbench.experimental.modernUI": false
+}
