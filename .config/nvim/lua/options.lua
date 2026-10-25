@@ -10,6 +10,9 @@ vim.g.have_nerd_font = false
 
 vim.o.number = true
 
+-- Display tabs as 4 columns wide
+vim.o.tabstop = 4
+
 -- Enable mouse mode
 vim.o.mouse = 'a'
 
