@@ -85,7 +85,11 @@ return {
     local servers = {
       clangd = {},
       gopls = {},
-      ols = {},
+      ols = {
+        init_options = {
+          checker_args = '-vet -strict-style -vet-tabs -disallow-do -warnings-as-errors',
+        },
+      },
       rust_analyzer = {},
       zls = {},
       ts_ls = {
