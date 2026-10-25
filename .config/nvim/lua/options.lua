@@ -12,6 +12,8 @@ vim.o.number = true
 
 -- Display tabs as 4 columns wide
 vim.o.tabstop = 4
+-- Indent by one tabstop
+vim.o.shiftwidth = 0
 
 -- Enable mouse mode
 vim.o.mouse = 'a'

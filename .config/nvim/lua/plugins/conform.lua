@@ -44,6 +44,7 @@ return {
       gdscript = { 'gdscript_formatter' },
       odin = { 'odinfmt', 'trim_newlines' },
       toml = { 'taplo' },
+      json = { 'jq' },
     },
   },
 }
