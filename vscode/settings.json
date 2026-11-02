@@ -78,5 +78,16 @@
         "editor.defaultFormatter": "charliermarsh.ruff"
     },
     "claudeCode.selectedModel": "claude-opus-4-6",
-    "workbench.experimental.modernUI": false
+    "workbench.experimental.modernUI": false,
+    "vim.normalModeKeyBindings": [
+        {
+            "before": [
+                "g",
+                "I"
+            ],
+            "commands": [
+                "editor.action.goToImplementation"
+            ]
+        }
+    ]
 }
