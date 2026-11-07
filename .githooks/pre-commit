@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+command -v gitleaks >/dev/null || { echo "pre-commit: gitleaks not installed (brew install gitleaks)"; exit 1; }
+gitleaks git --pre-commit --staged --redact --no-banner
+
+if git grep --cached -nE '/Users/|/home/' -- skills/; then
+    echo "pre-commit: machine-specific paths in skills/"
+    exit 1
+fi

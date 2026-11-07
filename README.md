@@ -38,6 +38,10 @@ npx skills add nonya123456/dotfiles -g
 
 ## Dependencies
 
+### Git hooks
+
+- [`gitleaks`](https://github.com/gitleaks/gitleaks) — required by the pre-commit hook (secret scan + no machine paths in `skills/`)
+
 ### Neovim
 
 - [`tree-sitter`](https://github.com/tree-sitter/tree-sitter) CLI

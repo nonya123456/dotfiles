@@ -38,4 +38,7 @@ case "$(uname -s)" in
         ;;
 esac
 
+git -C "$DOTFILES" config core.hooksPath .githooks
+echo "Enabled git hooks"
+
 echo "Done!"
