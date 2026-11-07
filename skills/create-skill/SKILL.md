@@ -17,6 +17,7 @@ Create a new skill with skill-creator, but save it in the dotfiles repo instead 
 4. Keep the skill portable — it must work on any machine:
    - No absolute or user-specific paths (`/Users/...`, `/home/...`, `~/dotfiles`), usernames, hostnames, or machine-specific tool locations
    - Refer to files relative to the repo or the current project; discover anything else at runtime
-   - Before finishing, grep the new skill folder for `/Users/`, `/home/`, `~/`, and the current `$USER`, and fix any hits
+   - No secrets: API keys, tokens, passwords, private URLs, emails, or internal hostnames — reference env vars or ask at runtime instead
+   - Before finishing, grep the new skill folder for `/Users/`, `/home/`, `~/`, the current `$USER`, and secret-looking strings (`key`, `token`, `secret`, `password`, `sk-`, `ghp_`, `AKIA`, `-----BEGIN`), and fix any hits
 5. Skills in `skills/` are picked up by the existing plugin entry in `.claude-plugin/marketplace.json`; do not edit it.
 6. Report the new skill's path. Do not commit unless asked.
