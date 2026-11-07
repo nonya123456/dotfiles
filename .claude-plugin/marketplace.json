@@ -1,0 +1,8 @@
+{
+  "name": "nonya-dotfiles",
+  "description": "nonya's Claude Code skills",
+  "owner": { "name": "nonya123456" },
+  "plugins": [
+    { "name": "dotfiles", "source": "./", "description": "Personal skills" }
+  ]
+}

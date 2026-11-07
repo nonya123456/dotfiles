@@ -21,7 +21,16 @@ ln -sf ~/dotfiles/vscode/keybindings.json ~/Library/Application\ Support/Code/Us
 
 ## Skills
 
-Install the skills in `skills/` with [`skills`](https://github.com/vercel-labs/skills):
+Install the skills in `skills/` as a Claude Code plugin:
+
+```sh
+claude plugin marketplace add nonya123456/dotfiles
+claude plugin install dotfiles@nonya-dotfiles
+```
+
+For auto-update: `/plugin` → Marketplaces → `nonya-dotfiles` → Enable auto-update.
+
+Or with [`skills`](https://github.com/vercel-labs/skills):
 
 ```sh
 npx skills add nonya123456/dotfiles -g
