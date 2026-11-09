@@ -20,12 +20,15 @@ const SCENE := "res://scenes/main.tscn"
 #   node_paths  - exported NodePaths vanish with the script that declared them
 #   uids        - ext_resource uid="..." attributes are dropped without the editor
 #   nodes       - a node whose owner was lost is not packed at all
+#   editables   - an instance's "editable children" flag, without which nodes
+#                 added inside that instance are dropped
 const GUARDED := {
 	"nodes": "[node ",
 	"ext_resources": "[ext_resource ",
 	"scripts": "script = ExtResource(",
 	"node_paths": "node_paths=",
 	"uids": "uid=\"uid://",
+	"editables": "[editable ",
 }
 
 # Set true only when the edit is *meant* to remove nodes/scripts, which would
@@ -79,30 +82,32 @@ func _read_uid(path: String) -> String:
 	return header.substr(start, header.find('"', start) - start)
 
 
-func _ext_uids(text: String) -> Dictionary:
-	var map := { }
-	for line in text.split("\n"):
-		if line.begins_with("[ext_resource "):
-			var p := _attr(line, "path")
-			var u := _attr(line, "uid")
-			if not p.is_empty() and not u.is_empty():
-				map[p] = u
-	return map
+## A resource's uid as the editor would write it, read from the files themselves:
+## a `.uid` sidecar (scripts, shaders), the `.import` remap (imported assets), or
+## the header of a .tscn/.tres. Empty when none exists yet (run `--import` first).
+func _uid_of(res_path: String) -> String:
+	if FileAccess.file_exists(res_path + ".uid"):
+		return FileAccess.get_file_as_string(res_path + ".uid").strip_edges()
+	if FileAccess.file_exists(res_path + ".import"):
+		var cfg := ConfigFile.new()
+		if cfg.load(res_path + ".import") == OK:
+			return str(cfg.get_value("remap", "uid", ""))
+	if res_path.ends_with(".tscn") or res_path.ends_with(".tres"):
+		return _read_uid(res_path)
+	return ""
 
 
 ## A headless save drops uid= from every ext_resource, which the editor would have
-## kept. Restore them from the before-image so the file stays editor-identical.
-func _reinject_ext_uids(path: String, map: Dictionary) -> void:
-	if map.is_empty():
-		return
+## kept. Restore them, including for resources the edit newly referenced.
+func _reinject_ext_uids(path: String) -> void:
 	var lines := FileAccess.get_file_as_string(path).split("\n")
 	for i in lines.size():
 		var line: String = lines[i]
 		if not line.begins_with("[ext_resource ") or not _attr(line, "uid").is_empty():
 			continue
-		var p := _attr(line, "path")
-		if map.has(p):
-			lines[i] = line.replace(' path="', ' uid="%s" path="' % map[p])
+		var u := _uid_of(_attr(line, "path"))
+		if not u.is_empty():
+			lines[i] = line.replace(' path="', ' uid="%s" path="' % u)
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	f.store_string("\n".join(lines))
 	f.close()
@@ -178,8 +183,9 @@ func _init() -> void:
 
 	var uid := _read_uid(SCENE)
 	var before_text := FileAccess.get_file_as_string(SCENE)
-	var ext_uids := _ext_uids(before_text)
-	var root := (ResourceLoader.load(SCENE) as PackedScene).instantiate()
+	# Edit state keeps instanced sub-scenes as instances, as the editor does. A plain
+	# instantiate() re-saves any instance with editable children fully inlined.
+	var root := (ResourceLoader.load(SCENE) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_MAIN)
 
 	# --- edits: mutate the node tree here ---
 	var sprite := Sprite2D.new()
@@ -200,7 +206,7 @@ func _init() -> void:
 		quit(1)
 		return
 	_reinject_uid(SCENE, uid)
-	_reinject_ext_uids(SCENE, ext_uids)
+	_reinject_ext_uids(SCENE)
 
 	var lost := _verify_or_rollback(SCENE, before_text)
 	if not lost.is_empty():

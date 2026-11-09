@@ -1,6 +1,6 @@
 ---
 name: godot-cli
-description: Drive Godot 4 from the shell for game development — run projects and read their output, playtest a running game (press inputs, read live node state, take screenshots), inspect classes and scenes, and create or edit .tscn scenes headless so the files stay byte-for-byte what the editor writes. Use whenever working in a Godot project (a folder with project.godot, .tscn/.gd files) and you need to run or playtest the game, check that a mechanic works, check errors, look up a node's properties, or change a scene, even if the user doesn't mention the CLI.
+description: Drive Godot 4 from the shell for game development — run projects and read their output, playtest a running game (press inputs, read live node state, take screenshots), check animation frame by frame, inspect classes, scenes and rigs, and create or edit .tscn scenes headless so the files stay byte-for-byte what the editor writes. Use whenever working in a Godot project (a folder with project.godot, .tscn/.gd files) and you need to run or playtest the game, check that a mechanic works, check errors, look up a node's properties, or change a scene, even if the user doesn't mention the CLI.
 ---
 
 # Godot from the CLI
@@ -47,20 +47,26 @@ func _init() -> void:
 	quit()
 ```
 
+Read a rig with [`read_skeleton.gd`](read_skeleton.gd) before animating or attaching to it: `SCENE=res://player.glb godot --headless --path <project> --script <skill dir>/read_skeleton.gd | grep '<<<OUT>>>'`. It prints one line per bone (index, name, parent, rest position) and stars the deform bones, found from skin weights rather than naming, so it holds for any rig. Add `DEFORM_ONLY=1` on a large rig; a Rigify export carries ~200 helper bones around ~35 deform ones.
+
 ## Writing files: let Godot serialize
 
 Any `.tscn`, `.tres` or `project.godot` you write should match what the editor would produce, so that opening and re-saving in the editor gives an empty diff. Don't hand-write the text formats, since their ordering and id/uid rules are easy to get subtly wrong. Use `PackedScene.pack()` + `ResourceSaver.save()` for scenes and resources, and `ConfigFile` for `project.godot`.
 
 Headless runs have no `EditorFileSystem`, which causes the gotchas below:
 
-1. **UIDs are dropped.** A headless save omits the `uid="uid://…"` in the `[gd_scene …]` header *and* on every `[ext_resource]`. When editing, read them before the save and re-inject them after it. For a **new** scene, mint one with `ResourceUID.id_to_text(ResourceUID.create_id())` and append it as the last attribute of the header line.
+1. **UIDs are dropped.** A headless save omits the `uid="uid://…"` in the `[gd_scene …]` header *and* on every `[ext_resource]`. When editing, re-inject them after the save from the sources in gotcha 2, which also covers resources the edit newly references; a new script has no `.uid` sidecar until `godot --headless --path <project> --import` runs. For a **new** scene, mint one with `ResourceUID.id_to_text(ResourceUID.create_id())` and append it as the last attribute of the header line.
 2. **`ResourceLoader.get_resource_uid()` returns -1 headless.** It reads only the editor cache. Get a uid from the file itself instead: the `.tscn`/`.tres` header, a `<file>.uid` sidecar (scripts), or `[remap] uid` in `<file>.import` (imported assets).
 3. **Autoloads don't exist.** A script that references an autoload (`Events.foo`) fails to compile under `--script`. `instantiate()` then yields a node with no script, and re-saving **silently strips the script and its exported NodePaths**. `Engine.register_singleton()` doesn't help. Before editing a scene, check every `.gd` it loads, recursively through sub-scenes, with `(load(p) as GDScript).can_instantiate()`. If any fail, don't re-save headless; hand-edit the `.tscn` instead.
 4. **Set `owner` on every added node** (`n.owner = root`, including descendants), or `pack()` silently drops it.
+5. **Nodes inside an instanced scene** (a child added under `Player/rig/Skeleton3D`, where `Player` is an instanced `.glb` or `.tscn`):
+   - Call `root.set_editable_instance(inst, true)` first, or `pack()` silently drops the node even with `owner` set. This writes `[editable path="Player"]`, as the editor's "Editable Children" does.
+   - Load the scene with `instantiate(PackedScene.GEN_EDIT_STATE_MAIN)`. A plain `instantiate()` re-saves an editable instance fully inlined: every bone and mesh of the model, thousands of lines.
+   - The added node is saved with every property written out at its default value. Harmless; delete those lines by hand for a clean diff.
 
 ## Editing a scene
 
-Use [`edit_scene.gd`](edit_scene.gd), which sits next to this file. It handles gotchas 1, 3 and 4: it refuses when a script doesn't compile, re-injects both kinds of uid, and rolls back if the save lost nodes, scripts, NodePaths or uids. Copy it to a temp file, set `SCENE`, replace the `--- edits ---` block, run it with `--path <project>`, and report the `<<<OUT>>>` line. Set `ALLOW_SHRINK` only when the edit is meant to remove things.
+Use [`edit_scene.gd`](edit_scene.gd), which sits next to this file. It handles gotchas 1, 3, 4 and the load mode of 5: it refuses when a script doesn't compile, re-injects both kinds of uid, and rolls back if the save lost nodes, scripts, NodePaths, uids or editable flags. Copy it to a temp file, set `SCENE`, replace the `--- edits ---` block, run it with `--path <project>`, and report the `<<<OUT>>>` line. Set `ALLOW_SHRINK` only when the edit is meant to remove things.
 
 Common edits inside that block:
 - Find: `root.get_node(NodePath("Path/To/Node"))`
@@ -70,6 +76,7 @@ Common edits inside that block:
 - Remove: `n.get_parent().remove_child(n); n.free()`
 - Reparent: `remove_child`, set `owner = null`, `add_child` on the new parent, then `owner = root` again
 - Group: `n.add_to_group("enemies", true)` (`true` = persistent)
+- Add inside an instanced scene: `root.set_editable_instance(root.get_node("Player"), true)`, then add as usual (gotcha 5)
 
 For a new scene, build the root node, `pack()`, `save()`, then add the header uid (gotcha 1).
 
@@ -106,3 +113,13 @@ func _init() -> void:
 Replies for `press`/`wait` arrive only after the time passes, so a sequence of `send.sh` calls plays out in real time without shell sleeps. Use bash's `/dev/tcp` as `send.sh` does; macOS `nc` disconnects when its input ends and never waits for a delayed reply.
 
 A good playtest loop: list the actions, screenshot, do one thing, read the state that should have changed, screenshot again, and report what you saw against what you expected. Kill the game process when done.
+
+## Checking motion
+
+One screenshot can't show an animation. Record frames with Movie Maker instead; it needs no autoload and runs at a fixed timestep, so frames are reproducible:
+
+```bash
+godot --path <project> res://scene.tscn --write-movie <dir>/f.png --fixed-fps 30 --quit-after 60
+```
+
+It runs windowed (headless renders nothing) and writes `<dir>/f00000000.png` onward. Tile 6–8 frames spread across one cycle into a single image (PIL) and Read that, rather than Reading frames one by one. For another camera angle, record from a temporary copy of the scene with the camera moved, then delete the copy. Check the motion against named expectations (which way a joint bends, which limbs move in opposite phase), since sign errors are the usual bug.
