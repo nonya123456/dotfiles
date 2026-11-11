@@ -17,9 +17,11 @@ Run `command -v godot` first. A shell alias is invisible to non-interactive shel
 | --- | --- |
 | Version | `godot --version` |
 | Open editor | `godot -e --path <project>` (run in background) |
-| Run the game | `godot --path <project> [res://scene.tscn]`, adding `--headless` when no window is needed |
-| Import / rebuild caches | `godot --headless --path <project> --import` |
+| Run the game | `godot --path <project> [res://scene.tscn]`, adding `--headless` only when nothing needs the GPU (see below) |
+| Import / rebuild caches | `godot --headless --path <project> --import`; run it after editing a `.glsl` or any imported asset, or the game keeps running the old import |
 | Export | `godot --headless --path <project> --export-release "<preset>" <out>` |
+
+Headless has no `RenderingDevice`: screenshots, compute shaders and anything else on the GPU need a windowed run. A script that awaits GPU results hangs headless instead of failing.
 
 Run long-lived processes (the game, the editor) with Bash `run_in_background`, then read their output and kill them when done. macOS has no `timeout` command, so don't rely on it.
 
@@ -113,6 +115,10 @@ func _init() -> void:
 Replies for `press`/`wait` arrive only after the time passes, so a sequence of `send.sh` calls plays out in real time without shell sleeps. Use bash's `/dev/tcp` as `send.sh` does; macOS `nc` disconnects when its input ends and never waits for a delayed reply.
 
 A good playtest loop: list the actions, screenshot, do one thing, read the state that should have changed, screenshot again, and report what you saw against what you expected. Kill the game process when done.
+
+## Measuring performance
+
+Read `Performance` monitors (`TIME_PHYSICS_PROCESS`, `TIME_PROCESS`) only after the game has run 1–2 s with no heavy script work. A long loop (a brute-force check, a mass spawn) makes Godot run catch-up physics steps, and their time lands in the next readings, inflating them many times over. Report `TIME_FPS` beside every timing, so a run capped by vsync or display refresh shows up as one.
 
 ## Checking motion
 
