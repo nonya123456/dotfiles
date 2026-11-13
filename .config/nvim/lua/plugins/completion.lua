@@ -16,7 +16,11 @@ return {
         end
         return 'make install_jsregexp'
       end)(),
-      opts = {},
+      -- leave a snippet once the cursor is outside it, so <Tab> stops jumping back into it
+      opts = {
+        region_check_events = 'CursorMoved,CursorMovedI,InsertEnter',
+        delete_check_events = 'TextChanged,InsertLeave',
+      },
     },
   },
   ---@module 'blink.cmp'

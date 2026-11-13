@@ -30,8 +30,11 @@ return {
       end
       -- enables syntax highlighting and other treesitter features
       vim.treesitter.start(buf, language)
-      -- enables treesitter based indentation
-      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      -- enables treesitter based indentation, except gdscript whose indent query mis-indents
+      -- blank lines between functions; the builtin runtime indent handles it
+      if language ~= 'gdscript' then
+        vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end
     end
 
     local available_parsers = require('nvim-treesitter').get_available()
