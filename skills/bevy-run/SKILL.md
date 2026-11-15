@@ -57,6 +57,22 @@ Values use the reflect JSON shape: read a value with `get_resources` first and s
 
 A tweak run: wait for the server, screenshot, mutate, `sleep` long enough for the change to play out, screenshot again, read back the value, and report the before/after against what you expected.
 
+## Sending input over BRP
+
+To press keys or move the mouse, write Bevy's own input messages with `world.write_message`. Bevy's input systems handle them like real device input, and the window doesn't need focus. OS-level key taps (`osascript … key code`) did not register in testing, so use BRP.
+
+```bash
+WIN=$(brp world.query '{"data":{},"filter":{"with":["bevy_window::window::PrimaryWindow"]}}' | python3 -c 'import json,sys; print(json.load(sys.stdin)["result"][0]["entity"])')
+key() { brp world.write_message "{\"message\":\"bevy_input::keyboard::KeyboardInput\",\"value\":{\"key_code\":\"$1\",\"logical_key\":\"$1\",\"state\":\"$2\",\"text\":null,\"repeat\":false,\"window\":$WIN}}" >/dev/null; }
+key Space Pressed; sleep 1; key Space Released                  # hold for 1s
+brp world.write_message '{"message":"bevy_input::mouse::MouseMotion","value":{"delta":[-100.0,0.0]}}'   # pixels; -x left, -y up
+```
+
+- `key_code` is a `KeyCode` variant name (`Space`, `KeyW`, `ShiftLeft`). `logical_key` only matters if the game reads `ButtonInput<Key>`. For anything other than a named key like `Space`, read its shape from `brp registry.schema` first.
+- A key stays held from `Pressed` until `Released`, so send both. `ButtonInput<KeyCode>` itself is not in the BRP registry, so setting it directly doesn't work.
+- `MouseMotion` feeds `AccumulatedMouseMotion` for one frame. Send one large delta, or several over time for a smooth turn.
+- To check the result, sample the state over time with `world.query` (velocity, `Transform`, the game's own components) while the input is held. Steer away from obstacles first, because a collision can hide what you are testing.
+
 ## Trying values
 
 Without BRP, or for values only read at startup (spawn counts, mesh sizes), edit the value where the game defines it (a `const`, a `Default` impl, a spawn call), then run → wait → screenshot → stop, once per value. Keep the features and the camera identical across runs so the screenshots are comparable. Report each value against what you saw, then restore the original value unless the user picks a new one.
