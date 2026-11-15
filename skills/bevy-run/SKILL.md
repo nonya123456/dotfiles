@@ -62,7 +62,9 @@ A tweak run: wait for the server, screenshot, mutate, `sleep` long enough for th
 To press keys or move the mouse, write Bevy's own input messages with `world.write_message`. Bevy's input systems handle them like real device input, and the window doesn't need focus. OS-level key taps (`osascript … key code`) did not register in testing, so use BRP.
 
 ```bash
-WIN=$(brp world.query '{"data":{},"filter":{"with":["bevy_window::window::PrimaryWindow"]}}' | python3 -c 'import json,sys; print(json.load(sys.stdin)["result"][0]["entity"])')
+first() { python3 -c 'import json,sys; r=json.load(sys.stdin)["result"]; print(r[0]["entity"] if r else "")'; }
+WIN=$(brp world.query '{"data":{},"filter":{"with":["bevy_window::window::PrimaryWindow"]}}' | first)
+[ -n "$WIN" ] || WIN=$(brp world.query '{"data":{}}' | first)   # headless (no window): any entity works
 key() { brp world.write_message "{\"message\":\"bevy_input::keyboard::KeyboardInput\",\"value\":{\"key_code\":\"$1\",\"logical_key\":\"$1\",\"state\":\"$2\",\"text\":null,\"repeat\":false,\"window\":$WIN}}" >/dev/null; }
 key Space Pressed; sleep 1; key Space Released                  # hold for 1s
 brp world.write_message '{"message":"bevy_input::mouse::MouseMotion","value":{"delta":[-100.0,0.0]}}'   # pixels; -x left, -y up
